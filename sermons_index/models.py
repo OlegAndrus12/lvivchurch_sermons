@@ -94,7 +94,8 @@ class Sermon(models.Model):
     video = models.URLField(blank=True, null=True)
     audio = models.URLField(blank=True, null=True)
     text = models.URLField(blank=True, null=True)
-    agenda = models.FileField(blank=True, null=True, storage=fs)
+    agenda = models.URLField(blank=True, null=True)
+    uploadfile = models.FileField(blank=True, null=True, storage=fs)
 
     def __str__(self):
         return self.title
