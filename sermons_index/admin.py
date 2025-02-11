@@ -9,6 +9,12 @@ class PreacherAdmin(admin.ModelAdmin):
 
 @admin.register(Sermon)
 class SermonAdmin(admin.ModelAdmin):
+    fields = ["preacher", "title", "date", "reference"]
     list_display = ('title', 'preacher', 'date')
     search_fields = ('title', 'preacher__first_name', 'preacher__last_name')
     list_filter = ('preacher', 'date')
+
+    def get_fields(self, request, obj = None):
+        if obj:
+            return self.fields + ["audio", "text", "agenda"]
+        return super().get_fields(request, obj)
