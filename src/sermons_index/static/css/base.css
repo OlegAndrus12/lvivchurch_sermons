@@ -17,6 +17,21 @@ body {
   line-height: 1.6;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
 /* ── Header ───────────────────────────────────────────── */
 .site-header {
   background: var(--color-surface);
@@ -413,4 +428,81 @@ div.dt-container .dt-paging .dt-paging-button.current:hover {
 div.dt-container .dt-paging .dt-paging-button.disabled {
   opacity: 0.35;
   cursor: default;
+}
+
+/* ── Table scroll wrapper ─────────────────────────────── */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page-main {
+    padding: 1.5rem 0 3rem;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .testament-tabs {
+    align-self: flex-start;
+  }
+
+  .verse-search {
+    min-width: 0;
+  }
+
+  .filter-select-group {
+    flex-wrap: wrap;
+  }
+
+  #filter-preacher {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .filter-date-range {
+    flex: 1;
+  }
+
+  .filter-date-range input[type="date"] {
+    flex: 1;
+    min-width: 0;
+  }
+
+  div.dt-container .dt-layout-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-inline: 1rem;
+  }
+
+  .page-title {
+    font-size: 1.375rem;
+  }
+
+  .testament-tab {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  table#sermons thead th,
+  table#sermons tbody td,
+  table#sermons tbody th {
+    padding: 0.625rem 0.75rem;
+  }
+
+  div.dt-container .dt-paging .dt-paging-button {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.8125rem;
+  }
 }
