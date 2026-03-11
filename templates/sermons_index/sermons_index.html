@@ -1,78 +1,89 @@
 {% extends "project/base.html" %}
-
+{% load static %}
 {% block title %}Проповіді{% endblock %}
-
+{% block extra_head %}
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css" />
+{% endblock %}
 {% block content %}
-<div class="container">
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/searchpanes/2.3.3/css/searchPanes.dataTables.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/select/3.0.0/css/select.dataTables.css" />
-
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/searchpanes/2.3.3/js/dataTables.searchPanes.js"></script>
-    <script src="https://cdn.datatables.net/searchpanes/2.3.3/js/searchPanes.dataTables.js"></script>
-    <script src="https://cdn.datatables.net/select/3.0.0/js/dataTables.select.js"></script>
-    <script src="https://cdn.datatables.net/select/3.0.0/js/select.dataTables.js"></script>
-
-
-    <h1>Проповіді</h1>
-    <div class="table-responsive">
-        <table id="sermons" class="table table-hover">
-            <thead class="">
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Дата</th>
-                <th scope="col">Книга</th>
-                <th scope="col">Цитата</th>
-                <th scope="col">Проповідник</th>
-                <th scope="col">Запис</th>
-                <th scope="col">Програма</th>
-                <th scope="col">Текст проповіді</th>
-              </tr>
-            </thead>
-            
-            <tbody>
-                {% for sermon in sermons %}
+    <div class="container">
+        <h1 class="page-title">Проповіді</h1>
+        <p class="page-subtitle">Архів проповідей церкви</p>
+        <div class="verse-filter">
+            <div class="filter-row">
+                <div class="testament-tabs">
+                    <button class="testament-tab active" data-t="">Всі</button>
+                    <button class="testament-tab" data-t="OT">Старий Заповіт</button>
+                    <button class="testament-tab" data-t="NT">Новий Заповіт</button>
+                </div>
+                <div class="verse-search">
+                    <input id="filter-verse"
+                           type="text"
+                           placeholder="Пошук по вірші — напр. Матвій 2:1 або Йоан 3:1-17">
+                    <button id="filter-verse-clear"
+                            class="verse-search__clear"
+                            aria-label="Скинути">✕</button>
+                </div>
+            </div>
+            <div class="filter-divider"></div>
+            <div class="filter-row">
+                <div class="filter-select-group">
+                    <label for="filter-preacher">Проповідник</label>
+                    <select id="filter-preacher">
+                        <option value="">Всі проповідники</option>
+                    </select>
+                </div>
+                <div class="filter-select-group">
+                    <label>Дата</label>
+                    <div class="filter-date-range">
+                        <input id="filter-date-from" type="date" title="Від">
+                        <span class="filter-year-sep">—</span>
+                        <input id="filter-date-to" type="date" title="До">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table id="sermons">
+                <thead>
                     <tr>
-                        <th>{{ forloop.counter}}</th>
-                        <td>{{ sermon.date }}</td>
-                        <td>{{ sermon.get_book_display }}</td>
-                        <td>{{ sermon.title }} ({{ sermon.quote }})</td>
-                        <td>{{ sermon.preacher }}</td>
-                        <td>{% if sermon.audio %}<a href="{{ sermon.audio }}" class="link-secondary">Аудіозапис</a>{% endif %}</td>
-                        <td>{% if sermon.agenda %}<a href="{{ sermon.agenda }}" class="link-secondary">Програма</a>{% endif %}</td>
-                        <td>{% if sermon.text %}<a href="{{ sermon.text }}" class="link-secondary">Текст</a>{% endif %}</td>
+                        <th>#</th>
+                        <th>Дата</th>
+                        <th>Назва</th>
+                        <th>Референс</th>
+                        <th>Проповідник</th>
+                        <th>Запис</th>
+                        <th>Програма</th>
+                        <th>Текст</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for sermon in sermons %}
+                        <tr>
+                            <th>{{ forloop.counter }}</th>
+                            <td data-order="{{ sermon.date|date:'Y-m-d' }}"
+                                data-filter="{{ sermon.date|date:'Y-m-d' }}">{{ sermon.date }}</td>
+                            <td>{{ sermon.title|default:sermon.reference }}</td>
+                            <td>{{ sermon.reference }}</td>
+                            <td>{{ sermon.preacher }}</td>
+                            <td>
+                                {% if sermon.audio %}<a href="{{ sermon.audio }}" class="resource-link">Аудіо</a>{% endif %}
+                            </td>
+                            <td>
+                                {% if sermon.agenda %}<a href="{{ sermon.agenda }}" class="resource-link">Програма</a>{% endif %}
+                            </td>
+                            <td>
+                                {% if sermon.text %}<a href="{{ sermon.text }}" class="resource-link">Текст</a>{% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-
-<script>
-
-new DataTable('#sermons', {
-    layout: {
-        top1: {
-            searchPanes: {
-                viewTotal: true,
-                threshold: 1,
-
-            },
-            
-        }
-    },
-    columnDefs: [
-        {
-            searchPanes: {
-                show: false
-            },
-            targets: [0,1,3,5,6,7]
-        }
-    ]
-
-});
-</script>
-
+{% endblock %}
+{% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
+    <script src="{% static 'js/sermons.js' %}"></script>
 {% endblock %}

@@ -3,8 +3,8 @@ from .models import Sermon
 
 
 class SermonsListView(ListView):
-    context_object_name = 'sermons'
+    context_object_name = "sermons"
     template_name = "sermons_index/sermons_index.html"
 
     def get_queryset(self):
-        return Sermon.objects.all()
+        return Sermon.objects.order_by("-date")

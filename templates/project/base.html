@@ -3,14 +3,28 @@
     <head>
         {% load static %}
         <meta charset="UTF-8">
-        <title>{% block title %}{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            {% block title %}{% endblock %}
+        — Церква</title>
         {% load bootstrap5 %}
         {% bootstrap_css %}
-
-        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+              rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'css/base.css' %}">
+        {% block extra_head %}{% endblock %}
     </head>
     <body>
-        {% block content %}{% endblock %}
-
+        <header class="site-header">
+            <div class="container">
+                <a href="/" class="church-name">Церква · Львів</a>
+            </div>
+        </header>
+        <main class="page-main">
+            {% block content %}{% endblock %}
+        </main>
+        {% block scripts %}{% endblock %}
     </body>
 </html>
