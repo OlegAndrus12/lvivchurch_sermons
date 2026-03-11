@@ -312,6 +312,7 @@ table#sermons thead th {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--color-border);
   white-space: nowrap;
+  text-align: left;
 }
 
 table#sermons tbody td,
@@ -370,29 +371,43 @@ div.dt-container .dt-info {
   line-height: 2;
 }
 
+div.dt-container .dt-paging {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--color-bg);
+  border-radius: 7px;
+  padding: 0.25rem;
+}
+
 div.dt-container .dt-paging .dt-paging-button {
-  border: 1px solid var(--color-border);
-  border-radius: 5px;
-  padding: 0.25rem 0.6rem;
-  font-size: 0.8125rem;
-  color: var(--color-text);
-  background: var(--color-surface);
-  margin: 0 2px;
+  border: none !important;
+  border-radius: 5px !important;
+  padding: 0.3rem 0.75rem !important;
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--color-text-muted) !important;
+  background: transparent !important;
+  box-shadow: none !important;
   cursor: pointer;
-  transition: all 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  white-space: nowrap;
+  line-height: 1.4;
 }
 
 div.dt-container .dt-paging .dt-paging-button:hover:not(.disabled) {
-  background: var(--color-bg);
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+  background: var(--color-border) !important;
+  color: var(--color-text) !important;
 }
 
-div.dt-container .dt-paging .dt-paging-button.current {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: #fff;
-  font-weight: 500;
+div.dt-container .dt-paging .dt-paging-button.current,
+div.dt-container .dt-paging .dt-paging-button.current:hover {
+  background: var(--color-surface) !important;
+  color: var(--color-accent) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
 }
 
 div.dt-container .dt-paging .dt-paging-button.disabled {

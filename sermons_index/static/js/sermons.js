@@ -12,6 +12,8 @@
     йоана: "йоан",
     "від йоана": "йоан",
     "дії апостолів": "дії",
+    "діі апостолів": "дії",
+    діі: "дії",
     "до римлян": "римляни",
     римлян: "римляни",
     єфесян: "ефесян",
@@ -35,7 +37,10 @@
   };
 
   function normalizeBook(raw) {
-    const b = raw.trim().toLowerCase();
+    const b = raw
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02bc]/g, "'");
     return BOOK_NORM[b] ?? b;
   }
 
@@ -46,6 +51,7 @@
     "лука",
     "йоан",
     "дії",
+    "дії апостолів",
     "римляни",
     "1 коринтян",
     "2 коринтян",
@@ -113,15 +119,16 @@
   let toYear = "";
 
   // ── DataTable ──────────────────────────────────────────────────────────────
-  const REF_COL = 3;
+  const REF_COL = 2;
 
   const table = new DataTable("#sermons", {
+    columnDefs: [{ orderable: false, targets: [4, 5, 6] }],
     layout: {
       topStart: null,
       topEnd: null,
       bottomStart: "info",
       bottomEnd: "paging",
-      bottom2Start: "pageLength",
+      bottom2Start: null,
       bottom2End: null,
     },
   });
@@ -140,10 +147,10 @@
         return false;
     }
 
-    if (activePreacher && data[4].trim() !== activePreacher) return false;
+    if (activePreacher && data[3].trim() !== activePreacher) return false;
 
-    if (fromYear && data[1] < fromYear) return false;
-    if (toYear && data[1] > toYear) return false;
+    if (fromYear && data[0] < fromYear) return false;
+    if (toYear && data[0] > toYear) return false;
 
     return true;
   });
@@ -190,7 +197,7 @@
 
   const preachers = [
     ...new Set(
-      Array.from(document.querySelectorAll("#sermons tbody tr td:nth-child(5)"))
+      Array.from(document.querySelectorAll("#sermons tbody tr td:nth-child(4)"))
         .map((td) => td.textContent.trim())
         .filter(Boolean),
     ),
@@ -202,16 +209,9 @@
     );
   });
 
-  const isoDates = Array.from(
-    document.querySelectorAll("#sermons tbody tr td:nth-child(2)"),
-  )
-    .map((td) => td.getAttribute("data-filter"))
-    .filter(Boolean)
-    .sort();
-  if (isoDates.length) {
-    elDateFrom.min = elDateTo.min = isoDates[0];
-    elDateFrom.max = elDateTo.max = isoDates[isoDates.length - 1];
-  }
+  const today = new Date().toISOString().slice(0, 10);
+  elDateFrom.min = elDateTo.min = "2010-01-01";
+  elDateFrom.max = elDateTo.max = today;
 
   elPreacher.addEventListener("change", () => {
     activePreacher = elPreacher.value;

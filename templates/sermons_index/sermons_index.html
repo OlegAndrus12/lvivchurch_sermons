@@ -8,7 +8,7 @@
 {% block content %}
     <div class="container">
         <h1 class="page-title">Проповіді</h1>
-        <p class="page-subtitle">Архів проповідей церкви</p>
+        <p class="page-subtitle">Архів проповідей церкви (Загальна к-сть:  {{ sermon_count }})</p>
         <div class="verse-filter">
             <div class="filter-row">
                 <div class="testament-tabs">
@@ -19,7 +19,7 @@
                 <div class="verse-search">
                     <input id="filter-verse"
                            type="text"
-                           placeholder="Пошук по вірші — напр. Матвій 2:1 або Йоан 3:1-17">
+                           placeholder="Пошук по віршу — напр. Матвій 2:1 або Йоан 3:1-17">
                     <button id="filter-verse-clear"
                             class="verse-search__clear"
                             aria-label="Скинути">✕</button>
@@ -31,6 +31,9 @@
                     <label for="filter-preacher">Проповідник</label>
                     <select id="filter-preacher">
                         <option value="">Всі проповідники</option>
+                        {% for preacher in preachers %}
+                            <option value="{{ preacher.pk }}">{{ preacher }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="filter-select-group">
@@ -47,7 +50,6 @@
             <table id="sermons">
                 <thead>
                     <tr>
-                        <th>#</th>
                         <th>Дата</th>
                         <th>Назва</th>
                         <th>Референс</th>
@@ -60,12 +62,11 @@
                 <tbody>
                     {% for sermon in sermons %}
                         <tr>
-                            <th>{{ forloop.counter }}</th>
                             <td data-order="{{ sermon.date|date:'Y-m-d' }}"
-                                data-filter="{{ sermon.date|date:'Y-m-d' }}">{{ sermon.date }}</td>
+                                data-filter="{{ sermon.date|date:'Y-m-d' }}">{{ sermon.date|date:"d.m.Y" }}</td>
                             <td>{{ sermon.title|default:sermon.reference }}</td>
                             <td>{{ sermon.reference }}</td>
-                            <td>{{ sermon.preacher }}</td>
+                            <td data-filter="{{ sermon.preacher.pk|default:'' }}">{{ sermon.preacher }}</td>
                             <td>
                                 {% if sermon.audio %}<a href="{{ sermon.audio }}" class="resource-link">Аудіо</a>{% endif %}
                             </td>
