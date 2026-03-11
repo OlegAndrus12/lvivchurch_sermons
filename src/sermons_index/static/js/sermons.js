@@ -122,6 +122,7 @@
   const REF_COL = 2;
 
   const table = new DataTable("#sermons", {
+    order: [[0, "desc"]],
     columnDefs: [{ orderable: false, targets: [4, 5, 6] }],
     layout: {
       topStart: null,

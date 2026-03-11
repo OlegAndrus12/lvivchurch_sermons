@@ -32,32 +32,68 @@ poetry run python manage.py test
 poetry run python manage.py createsuperuser
 ```
 
+## Project Structure
+
+```
+repo/
+  manage.py                          # Django CLI entry point; adds src/ to sys.path
+  db.sqlite3                         # SQLite database (stays at repo root)
+  pyproject.toml                     # Poetry dependencies
+  .pre-commit-config.yaml            # Pre-commit hooks (black, prettier)
+  src/
+    project/                         # Django project config
+      settings.py                    # BASE_DIR = src/, ROOT_DIR = repo root
+      urls.py
+      wsgi.py / asgi.py
+    sermons_index/                   # Main Django app
+      models.py                      # Preacher, Sermon models
+      views.py                       # SermonsListView
+      admin.py                       # SermonAdmin
+      urls.py
+      services/
+        storage.py                   # AppBoxStorage (Box.com backend)
+      management/commands/
+        scrape_sermons.py            # Scraper for lvivtserkva.com
+      migrations/
+      static/
+        css/base.css                 # All styles
+        js/sermons.js                # DataTables init + all filter logic
+    templates/
+      project/base.html              # Bootstrap 5 base template
+      sermons_index/sermons_index.html  # Sermon list (Ukrainian UI)
+```
+
 ## Architecture
 
 Django 4.2 app for managing and displaying Lviv church sermon archives with Box.com cloud storage for multimedia files.
 
-**Single Django app:** `sermons_index/` handles all logic — models, views, URLs, admin, and Box.com storage service.
+**Single Django app:** `src/sermons_index/` handles all logic — models, views, URLs, admin, and Box.com storage service.
 
-### Data Models (`sermons_index/models.py`)
+### Data Models (`src/sermons_index/models.py`)
 - **Preacher** — `first_name`, `last_name`
-- **Sermon** — `preacher` (FK), `title`, `date` (unique), `reference`, `audio`, `text`, `agenda` (FileFields → Box.com), `folder_id`
+- **Sermon** — `preacher` (FK), `title` (max 256), `date` (unique), `reference`, `audio`, `text`, `agenda` (FileFields → Box.com), `folder_id`
   - `save()` auto-creates a Box.com folder if `folder_id` is unset
 
-### Box.com Integration (`sermons_index/services/storage.py`)
+### Box.com Integration (`src/sermons_index/services/storage.py`)
 - `AppBoxStorage` extends Django's `Storage` base class
 - Authenticates via developer token (currently hardcoded — stored in `BOX_DEVELOPER_TOKEN`)
 - Used as the storage backend for all Sermon file fields
 
-### Admin (`sermons_index/admin.py`)
+### Admin (`src/sermons_index/admin.py`)
 - `SermonAdmin` shows only basic fields (preacher, title, date, reference) during creation; file fields (audio, text, agenda) appear only on the edit view — this is intentional so Box.com folder is created first
 
+### Frontend (`src/sermons_index/static/js/sermons.js`)
+- DataTables v2 with jQuery (required for custom search extensions)
+- Filters: OT/NT testament tabs, verse range search, preacher dropdown (populated from Django context), date range
+- Preacher filter compares by PK via `data-filter` attribute to avoid string encoding issues
+- Book name normalisation handles Ukrainian genitive forms, curly apostrophes (U+2019 → U+0027), and alternate spellings (e.g. `діі` → `дії`)
+
 ### Templates
-- `templates/project/base.html` — Bootstrap 5 base
-- `templates/sermons_index/sermons_index.html` — Sermon list with DataTables + SearchPanes; UI is in Ukrainian
+- `src/templates/project/base.html` — Bootstrap 5 base; loads `base.css` after `{% block extra_head %}` so our styles override CDN DataTables CSS
+- `src/templates/sermons_index/sermons_index.html` — Sermon list; UI is in Ukrainian
 
 ### URL Structure
 - `/` → `SermonsListView` (public sermon list)
 - `/admin/` → Django admin
-
 
 ### Development notes

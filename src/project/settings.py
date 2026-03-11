@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent  # src/
+ROOT_DIR = BASE_DIR.parent  # repo root
 
 # Quick-start development settings - unsuitable for production
 # See https://dobcs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -36,7 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "bootstrap5",
-    "sermons_index"
+    "sermons_index",
 ]
 
 MIDDLEWARE = [
@@ -76,7 +77,7 @@ WSGI_APPLICATION = "project.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": ROOT_DIR / "db.sqlite3",
     }
 }
 
@@ -110,7 +111,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 
 STATIC_URL = "static/"
