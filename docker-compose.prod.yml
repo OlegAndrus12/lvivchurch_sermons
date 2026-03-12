@@ -1,0 +1,15 @@
+services:
+  web:
+    image: olehandrus/lvivchurch-sermons:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=False
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - BOX_DEVELOPER_TOKEN=${BOX_DEVELOPER_TOKEN}
+    volumes:
+      - sqlite_data:/data
+
+volumes:
+  sqlite_data:

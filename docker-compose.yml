@@ -1,5 +1,6 @@
 services:
   web:
+    image: olehandrus/lvivchurch-sermons:latest
     build:
       context: .
       args:
