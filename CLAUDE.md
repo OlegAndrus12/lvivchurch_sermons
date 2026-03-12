@@ -97,3 +97,34 @@ Django 4.2 app for managing and displaying Lviv church sermon archives with Box.
 - `/admin/` → Django admin
 
 ### Development notes
+- no magic numbers, hardcoded values
+- make sure code is well formatted with black and readable
+
+## Python/Django Conventions
+- Follow PEP8 and use type hints
+- Use class-based views (CBVs) over function-based where appropriate
+- Write tests using pytest-django
+- Avoid N+1 queries — use select_related/prefetch_related
+- Use Django ORM, avoid raw SQL unless necessary
+- Use environment variables for secrets (never hardcode)
+- Follow fat models, thin views pattern
+- Use Django's built-in auth system
+
+## Frontend Conventions
+### JavaScript/jQuery
+- Use jQuery for DOM manipulation (project already uses it)
+- Avoid inline JavaScript — keep JS in separate files under static/js/
+- Use $(document).ready() for initialization
+- Prefer event delegation for dynamically created elements
+- Use const/let, never var
+
+### CSS
+- Follow BEM naming convention for CSS classes
+- Keep styles in src/sermons_index/static/css/, never inline styles
+- Mobile-first approach for responsive design
+- Use CSS variables for colors and reusable values
+
+### Django Templates
+- Keep logic out of templates — handle it in views/context processors
+- Use template tags and filters instead of complex template logic
+- Break templates into reusable partials using {% include %}

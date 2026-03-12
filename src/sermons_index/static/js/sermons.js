@@ -1,4 +1,13 @@
 (function () {
+  // ── Constants ──────────────────────────────────────────────────────────────
+  const DATE_COL = 0;
+  const REF_COL = 2;
+  const PREACHER_COL = 3;
+  const MAX_VERSE = 9999;
+  const CHAPTER_MULTIPLIER = 10_000;
+  const VERSE_DEBOUNCE_MS = 300;
+  const DATE_MIN = "2010-01-01";
+
   // ── Book name normalisation ────────────────────────────────────────────────
   const BOOK_NORM = {
     матвія: "матвій",
@@ -101,28 +110,32 @@
         v2 = +m[4];
       } else {
         ch2 = +m[4];
-        v2 = 9999;
+        v2 = MAX_VERSE;
       }
     } else {
       ch2 = ch1;
-      v2 = v1 > 0 ? v1 : 9999;
+      v2 = v1 > 0 ? v1 : MAX_VERSE;
     }
 
-    return { book, start: ch1 * 10000 + v1, end: ch2 * 10000 + v2 };
+    return {
+      book,
+      start: ch1 * CHAPTER_MULTIPLIER + v1,
+      end: ch2 * CHAPTER_MULTIPLIER + v2,
+    };
   }
 
-  // ── State ──────────────────────────────────────────────────────────────────
-  let activeTestament = "";
-  let verseQuery = null;
-  let activePreacher = "";
-  let fromYear = "";
-  let toYear = "";
+  // ── Filter state ───────────────────────────────────────────────────────────
+  const state = {
+    testament: "",
+    verse: null,
+    preacher: "",
+    fromDate: "",
+    toDate: "",
+  };
 
   // ── DataTable ──────────────────────────────────────────────────────────────
-  const REF_COL = 2;
-
   const table = new DataTable("#sermons", {
-    order: [[0, "desc"]],
+    order: [[DATE_COL, "desc"]],
     columnDefs: [{ orderable: false, targets: [4, 5, 6] }],
     layout: {
       topStart: null,
@@ -138,20 +151,21 @@
   $.fn.dataTable.ext.search.push(function (_settings, data) {
     const ref = parseRef(data[REF_COL]);
 
-    if (activeTestament) {
-      if (!ref || testament(ref.book) !== activeTestament) return false;
+    if (state.testament) {
+      if (!ref || testament(ref.book) !== state.testament) return false;
     }
 
-    if (verseQuery) {
-      if (!ref || ref.book !== verseQuery.book) return false;
-      if (ref.end < verseQuery.start || ref.start > verseQuery.end)
+    if (state.verse) {
+      if (!ref || ref.book !== state.verse.book) return false;
+      if (ref.end < state.verse.start || ref.start > state.verse.end)
         return false;
     }
 
-    if (activePreacher && data[3].trim() !== activePreacher) return false;
+    if (state.preacher && data[PREACHER_COL].trim() !== state.preacher)
+      return false;
 
-    if (fromYear && data[0] < fromYear) return false;
-    if (toYear && data[0] > toYear) return false;
+    if (state.fromDate && data[DATE_COL] < state.fromDate) return false;
+    if (state.toDate && data[DATE_COL] > state.toDate) return false;
 
     return true;
   });
@@ -159,11 +173,13 @@
   // ── Testament tabs ─────────────────────────────────────────────────────────
   document.querySelectorAll(".testament-tab").forEach((btn) => {
     btn.addEventListener("click", () => {
-      document
-        .querySelectorAll(".testament-tab")
-        .forEach((b) => b.classList.remove("active"));
+      document.querySelectorAll(".testament-tab").forEach((b) => {
+        b.classList.remove("active");
+        b.setAttribute("aria-selected", "false");
+      });
       btn.classList.add("active");
-      activeTestament = btn.dataset.t;
+      btn.setAttribute("aria-selected", "true");
+      state.testament = btn.dataset.t;
       table.draw();
     });
   });
@@ -177,16 +193,16 @@
     clearTimeout(debounce);
     debounce = setTimeout(() => {
       const raw = elVerse.value.trim();
-      verseQuery = raw ? parseRef(raw) : null;
-      elClear.style.display = raw ? "flex" : "none";
+      state.verse = raw ? parseRef(raw) : null;
+      elClear.classList.toggle("verse-search__clear--visible", Boolean(raw));
       table.draw();
-    }, 300);
+    }, VERSE_DEBOUNCE_MS);
   });
 
   elClear.addEventListener("click", () => {
     elVerse.value = "";
-    elClear.style.display = "none";
-    verseQuery = null;
+    elClear.classList.remove("verse-search__clear--visible");
+    state.verse = null;
     table.draw();
     elVerse.focus();
   });
@@ -196,34 +212,20 @@
   const elDateFrom = document.getElementById("filter-date-from");
   const elDateTo = document.getElementById("filter-date-to");
 
-  const preachers = [
-    ...new Set(
-      Array.from(document.querySelectorAll("#sermons tbody tr td:nth-child(4)"))
-        .map((td) => td.textContent.trim())
-        .filter(Boolean),
-    ),
-  ].sort();
-  preachers.forEach((p) => {
-    elPreacher.insertAdjacentHTML(
-      "beforeend",
-      `<option value="${p}">${p}</option>`,
-    );
-  });
-
   const today = new Date().toISOString().slice(0, 10);
-  elDateFrom.min = elDateTo.min = "2010-01-01";
+  elDateFrom.min = elDateTo.min = DATE_MIN;
   elDateFrom.max = elDateTo.max = today;
 
   elPreacher.addEventListener("change", () => {
-    activePreacher = elPreacher.value;
+    state.preacher = elPreacher.value;
     table.draw();
   });
   elDateFrom.addEventListener("input", () => {
-    fromYear = elDateFrom.value;
+    state.fromDate = elDateFrom.value;
     table.draw();
   });
   elDateTo.addEventListener("input", () => {
-    toYear = elDateTo.value;
+    state.toDate = elDateTo.value;
     table.draw();
   });
 })();

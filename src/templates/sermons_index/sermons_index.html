@@ -11,10 +11,10 @@
         <p class="page-subtitle">Архів проповідей церкви (Загальна к-сть:  {{ sermon_count }})</p>
         <div class="verse-filter">
             <div class="filter-row">
-                <div class="testament-tabs">
-                    <button class="testament-tab active" data-t="">Всі</button>
-                    <button class="testament-tab" data-t="OT">Старий Заповіт</button>
-                    <button class="testament-tab" data-t="NT">Новий Заповіт</button>
+                <div class="testament-tabs" role="tablist" aria-label="Завіт">
+                    <button class="testament-tab active" role="tab" aria-selected="true" data-t="">Всі</button>
+                    <button class="testament-tab" role="tab" aria-selected="false" data-t="OT">Старий Заповіт</button>
+                    <button class="testament-tab" role="tab" aria-selected="false" data-t="NT">Новий Заповіт</button>
                 </div>
                 <div class="verse-search">
                     <input id="filter-verse"
