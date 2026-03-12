@@ -65,7 +65,7 @@ repo/
 
 ## Architecture
 
-Django 4.2 app for managing and displaying Lviv church sermon archives with Box.com cloud storage for multimedia files.
+Django 5.2 app for managing and displaying Lviv church sermon archives with Box.com cloud storage for multimedia files.
 
 **Single Django app:** `src/sermons_index/` handles all logic — models, views, URLs, admin, and Box.com storage service.
 

@@ -1,3 +1,5 @@
+import os
+
 from django.core.files.storage import Storage
 from box_sdk_gen import (
     BoxClient,
@@ -14,7 +16,7 @@ from box_sdk_gen.managers.search import SearchForContentTrashContent
 class AppBoxStorage(Storage):
     def __init__(self):
         self.api = BoxClient(
-            BoxDeveloperTokenAuth(token="TZNxfaXhSKZ9TXAnEIJLbb44D1IMGbis")
+            BoxDeveloperTokenAuth(token=os.environ["BOX_DEVELOPER_TOKEN"])
         )
         self.file_url = "https://app.box.com/file/{file_id}"
         self.folder_id = None

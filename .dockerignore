@@ -1,0 +1,10 @@
+.git
+.env
+.env.*
+__pycache__
+*.pyc
+*.pyo
+db.sqlite3
+.pre-commit-config.yaml
+node_modules
+src/staticfiles

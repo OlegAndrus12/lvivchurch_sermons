@@ -3,14 +3,17 @@ name = "lvivchurch-sermons"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "Oleh Andrus",email = "oleh.andrus@kompaspublishing.nl"}
+    {name = "Oleh Andrus",email = "andrusoleg123@gmail.com"}
 ]
 readme = "README.md"
-requires-python = "^3.11"
+requires-python = "^3.13"
 dependencies = [
     "django (>=5.2,<6.0)",
     "beautifulsoup4 (==4.12.3)",
-    "box-sdk-gen (>=1.17.0,<2.0.0)"
+    "box-sdk-gen (>=1.17.0,<2.0.0)",
+    "gunicorn (>=21.0,<24.0)",
+    "whitenoise (>=6.8,<7.0)",
+    "python-dotenv (>=1.2.2,<2.0.0)"
 ]
 
 
@@ -22,6 +25,7 @@ build-backend = "poetry.core.masonry.api"
 pre-commit = "^4.5.1"
 ruff = "^0.15.5"
 djlint = "^1.36.4"
+python-dotenv = ">=1.0"
 
 
 [tool.ruff]

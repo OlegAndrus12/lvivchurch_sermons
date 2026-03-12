@@ -1,0 +1,13 @@
+services:
+  web:
+    build:
+      context: .
+      args:
+        SECRET_KEY: ${SECRET_KEY}
+        BOX_DEVELOPER_TOKEN: ${BOX_DEVELOPER_TOKEN}
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
