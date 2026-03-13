@@ -1,6 +1,6 @@
 services:
   web:
-    image: olehandrus/lvivchurch-sermons:latest
+    image: olehandrus/sermons-index:latest
     ports:
       - "8000:8000"
     environment:
@@ -9,7 +9,4 @@ services:
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
       - BOX_DEVELOPER_TOKEN=${BOX_DEVELOPER_TOKEN}
     volumes:
-      - sqlite_data:/data
-
-volumes:
-  sqlite_data:
+      - ./db.sqlite3:/app/db.sqlite3

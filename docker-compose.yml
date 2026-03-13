@@ -1,6 +1,6 @@
 services:
   web:
-    image: olehandrus/lvivchurch-sermons:latest
+    image: olehandrus/sermons-index:latest
     build:
       context: .
       args:
@@ -12,3 +12,17 @@ services:
       - .env
     volumes:
       - ./db.sqlite3:/app/db.sqlite3
+      - ./src:/app/src
+      - ./manage.py:/app/manage.py
+    command: >
+      sh -c "poetry run python manage.py migrate --noinput &&
+             poetry run python manage.py runserver 0.0.0.0:8000"
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: pyproject.toml
+        - action: rebuild
+          path: poetry.lock
