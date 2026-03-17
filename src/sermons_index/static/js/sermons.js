@@ -175,7 +175,18 @@
       const btn = this;
       const id = $(btn).closest("tr").data("id");
       const url = `${location.origin}${location.pathname}?sermon=${id}`;
-      navigator.clipboard.writeText(url);
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = url;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
       btn.classList.add("sermon-link-btn--copied");
       setTimeout(
         () => btn.classList.remove("sermon-link-btn--copied"),
