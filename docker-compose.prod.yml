@@ -1,6 +1,10 @@
 services:
   web:
-    image: olehandrus/sermons-index:latest
+    build:
+      context: .
+      args:
+        - SECRET_KEY=${SECRET_KEY}
+        - BOX_DEVELOPER_TOKEN=${BOX_DEVELOPER_TOKEN}
     ports:
       - "8000:8000"
     environment:
