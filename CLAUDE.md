@@ -99,6 +99,7 @@ Django 5.2 app for managing and displaying Lviv church sermon archives with Box.
 ### Development notes
 - no magic numbers, hardcoded values
 - make sure code is well formatted with black and readable
+- no inline svgs, always in the separate file
 
 ## Python/Django Conventions
 - Follow PEP8 and use type hints

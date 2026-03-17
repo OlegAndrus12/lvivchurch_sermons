@@ -1,11 +1,17 @@
 (function () {
   // ── Constants ──────────────────────────────────────────────────────────────
-  const DATE_COL = 0;
-  const REF_COL = 2;
-  const PREACHER_COL = 3;
+  const LINK_COL = 0;
+  const DATE_COL = 1;
+  const REF_COL = 3;
+  const PREACHER_COL = 4;
+  const AUDIO_COL = 5;
+  const AGENDA_COL = 6;
+  const TEXT_COL = 7;
   const MAX_VERSE = 9999;
   const CHAPTER_MULTIPLIER = 10_000;
   const VERSE_DEBOUNCE_MS = 300;
+  const COPIED_FEEDBACK_MS = 1500;
+  const SCROLL_DELAY_MS = 50;
   const DATE_MIN = "2010-01-01";
 
   // ── Book name normalisation ────────────────────────────────────────────────
@@ -144,7 +150,12 @@
   // ── DataTable ──────────────────────────────────────────────────────────────
   const table = new DataTable("#sermons", {
     order: [[DATE_COL, "desc"]],
-    columnDefs: [{ orderable: false, targets: [4, 5, 6] }],
+    columnDefs: [
+      {
+        orderable: false,
+        targets: [LINK_COL, AUDIO_COL, AGENDA_COL, TEXT_COL],
+      },
+    ],
     layout: {
       topStart: null,
       topEnd: null,
@@ -154,6 +165,40 @@
       bottom2End: null,
     },
   });
+
+  // ── Copy permalink ─────────────────────────────────────────────────────────
+  $("#sermons tbody").on(
+    "click",
+    ".sermon-link-btn:not(.sermon-link-btn--copied)",
+    function () {
+      const btn = this;
+      const id = $(btn).closest("tr").data("id");
+      const url = `${location.origin}${location.pathname}?sermon=${id}`;
+      navigator.clipboard.writeText(url);
+      btn.classList.add("sermon-link-btn--copied");
+      setTimeout(
+        () => btn.classList.remove("sermon-link-btn--copied"),
+        COPIED_FEEDBACK_MS,
+      );
+    },
+  );
+
+  // ── On-load permalink scroll ───────────────────────────────────────────────
+  const targetId = new URLSearchParams(location.search).get("sermon");
+  if (targetId) {
+    const allNodes = table.rows({ order: "current" }).nodes().toArray();
+    const rowNode = allNodes.find((tr) => tr.dataset.id === targetId);
+    if (rowNode) {
+      const displayIdx = allNodes.indexOf(rowNode);
+      const pageNum = Math.floor(displayIdx / table.page.len());
+      table.page(pageNum).draw(false);
+      rowNode.classList.add("sermon--highlighted");
+      setTimeout(
+        () => rowNode.scrollIntoView({ behavior: "smooth", block: "center" }),
+        SCROLL_DELAY_MS,
+      );
+    }
+  }
 
   // ── Custom search ──────────────────────────────────────────────────────────
   $.fn.dataTable.ext.search.push(function (_settings, data) {

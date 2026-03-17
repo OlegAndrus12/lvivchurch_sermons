@@ -51,6 +51,7 @@
             <table id="sermons">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Дата</th>
                         <th>Назва</th>
                         <th>Референс</th>
@@ -62,7 +63,13 @@
                 </thead>
                 <tbody>
                     {% for sermon in sermons %}
-                        <tr>
+                        <tr data-id="{{ sermon.pk }}">
+                            <td>
+                                <button class="sermon-link-btn" aria-label="Скопіювати посилання">
+                                    <span class="sermon-link-btn__icon-link">{% include "sermons_index/icons/link.html" %}</span>
+                                    <span class="sermon-link-btn__icon-check">{% include "sermons_index/icons/check.html" %}</span>
+                                </button>
+                            </td>
                             <td data-order="{{ sermon.date|date:'Y-m-d' }}"
                                 data-filter="{{ sermon.date|date:'Y-m-d' }}">{{ sermon.date|date:"d.m.Y" }}</td>
                             <td>{{ sermon.title|default:sermon.reference }}</td>

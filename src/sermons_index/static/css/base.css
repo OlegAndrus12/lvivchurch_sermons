@@ -511,6 +511,50 @@ div.dt-container .dt-paging .dt-paging-button.disabled {
   }
 }
 
+/* ── Permalink button ─────────────────────────────────── */
+.sermon-link-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast);
+  display: flex;
+  align-items: center;
+}
+
+.sermon-link-btn:hover {
+  color: var(--color-accent);
+  background: rgba(61, 107, 79, 0.08);
+}
+
+.sermon-link-btn__icon-check {
+  display: none;
+}
+
+.sermon-link-btn--copied {
+  color: var(--color-accent);
+  background: rgba(61, 107, 79, 0.12);
+  cursor: default;
+}
+
+.sermon-link-btn--copied .sermon-link-btn__icon-link {
+  display: none;
+}
+
+.sermon-link-btn--copied .sermon-link-btn__icon-check {
+  display: flex;
+}
+
+.sermon--highlighted {
+  background-color: #fffbe6 !important;
+  outline: 2px solid #f0c040;
+  outline-offset: -2px;
+}
+
 @media (max-width: 480px) {
   .container {
     padding-inline: 1rem;
