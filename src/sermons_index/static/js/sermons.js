@@ -209,7 +209,7 @@
     }
 
     if (state.verse) {
-      if (!ref || ref.book !== state.verse.book) return false;
+      if (!ref || !ref.book.startsWith(state.verse.book)) return false;
       if (ref.end < state.verse.start || ref.start > state.verse.end)
         return false;
     }
