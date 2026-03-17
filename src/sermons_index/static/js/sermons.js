@@ -91,10 +91,18 @@
 
   // ── Reference parser ───────────────────────────────────────────────────────
   function parseRef(str) {
-    const m = str
-      .trim()
-      .match(/^(.*?)\s+(\d+)(?::(\d+))?(?:\s*[-–]\s*(\d+)(?::(\d+))?)?$/);
-    if (!m) return null;
+    const trimmed = str.trim();
+    const m = trimmed.match(
+      /^(.*?)\s+(\d+)(?::(\d+))?(?:\s*[-–]\s*(\d+)(?::(\d+))?)?$/,
+    );
+    if (!m) {
+      const book = normalizeBook(trimmed);
+      return {
+        book,
+        start: 0,
+        end: MAX_VERSE * CHAPTER_MULTIPLIER + MAX_VERSE,
+      };
+    }
 
     const book = normalizeBook(m[1]);
     const ch1 = +m[2],
@@ -205,6 +213,29 @@
     state.verse = null;
     table.draw();
     elVerse.focus();
+  });
+
+  // ── Reset all filters ──────────────────────────────────────────────────────
+  document.getElementById("filter-reset").addEventListener("click", () => {
+    elVerse.value = "";
+    elClear.classList.remove("verse-search__clear--visible");
+
+    document.querySelectorAll(".testament-tab").forEach((b) => {
+      b.classList.toggle("active", b.dataset.t === "");
+      b.setAttribute("aria-selected", String(b.dataset.t === ""));
+    });
+
+    state.testament = "";
+    state.verse = null;
+    state.preacher = "";
+    state.fromDate = "";
+    state.toDate = "";
+
+    document.getElementById("filter-preacher").value = "";
+    document.getElementById("filter-date-from").value = "";
+    document.getElementById("filter-date-to").value = "";
+
+    table.draw();
   });
 
   // ── Preacher & date filters ────────────────────────────────────────────────

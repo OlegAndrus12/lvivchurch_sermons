@@ -199,6 +199,28 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.filter-reset {
+  margin-left: auto;
+  border: 1px solid var(--color-accent);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-accent);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.3rem 0.875rem;
+  height: 2rem;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.filter-reset:hover {
+  background: var(--color-accent);
+  color: #fff;
+}
+
 /* Verse search */
 .verse-search {
   flex: 1;
