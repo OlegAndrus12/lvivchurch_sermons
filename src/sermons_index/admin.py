@@ -10,8 +10,7 @@ class PreacherAdmin(admin.ModelAdmin):
 
 @admin.register(Sermon)
 class SermonAdmin(admin.ModelAdmin):
-    fields = ["preacher", "title", "date", "reference"]
-    list_display = ("title", "preacher", "date")
+    fields = ["preacher", "title", "date", "reference", "audio", "text", "agenda"]
     search_fields = ("title", "preacher__first_name", "preacher__last_name")
     list_filter = ("preacher", "date")
 

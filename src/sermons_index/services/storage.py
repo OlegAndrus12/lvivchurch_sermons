@@ -12,6 +12,10 @@ from box_sdk_gen import (
 )
 from box_sdk_gen.box.errors import BoxAPIError
 from box_sdk_gen.box.oauth import TokenStorage, AccessToken
+from box_sdk_gen.managers.shared_links_files import (
+    AddShareLinkToFileSharedLink,
+    AddShareLinkToFileSharedLinkAccessField,
+)
 from django.core.files.storage import Storage
 from django.utils.deconstruct import deconstructible
 
@@ -65,14 +69,13 @@ class AppBoxStorage(Storage):
             )
         )
         self.api = BoxClient(auth)
-        self.file_url = "https://app.box.com/file/{file_id}"
         self.folder_id = None
 
     def _save(self, name, file):
         return self.upload_file(name, file)
 
     def url(self, name):
-        return self.file_url.format(file_id=name)
+        return name
 
     def exists(self, name):
         return False
@@ -80,6 +83,16 @@ class AppBoxStorage(Storage):
     def create_folder(self, name):
         res = self.api.folders.create_folder(name, parent=CreateFolderParent("0"))
         return res.id
+
+    def _create_shared_link(self, file_id: str) -> str:
+        result = self.api.shared_links_files.add_share_link_to_file(
+            file_id,
+            fields="shared_link",
+            shared_link=AddShareLinkToFileSharedLink(
+                access=AddShareLinkToFileSharedLinkAccessField.OPEN,
+            ),
+        )
+        return result.shared_link.url
 
     def upload_file(self, name, file):
         try:
@@ -89,17 +102,17 @@ class AppBoxStorage(Storage):
                 ),
                 file,
             )
-            return str(files.entries[0].id)
+            file_id = files.entries[0].id
         except BoxAPIError as e:
             if e.response_info.code != "item_name_in_use":
                 raise
-            existing_id = e.response_info.context_info["conflicts"]["id"]
-            files = self.api.uploads.upload_file_version(
-                existing_id,
+            file_id = e.response_info.context_info["conflicts"]["id"]
+            self.api.uploads.upload_file_version(
+                file_id,
                 UploadFileVersionAttributes(name=name),
                 file,
             )
-            return str(files.entries[0].id)
+        return self._create_shared_link(file_id)
 
     def set_folder_id(self, id):
         self.folder_id = id
