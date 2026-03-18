@@ -5,7 +5,6 @@ services:
       context: .
       args:
         SECRET_KEY: ${SECRET_KEY}
-        BOX_DEVELOPER_TOKEN: ${BOX_DEVELOPER_TOKEN}
     ports:
       - "8000:8000"
     env_file:
@@ -14,6 +13,7 @@ services:
       - ./db.sqlite3:/app/db.sqlite3
       - ./src:/app/src
       - ./manage.py:/app/manage.py
+      - ./box_tokens.json:/app/box_tokens.json
     entrypoint: []
     command: >
       sh -c "poetry run python manage.py migrate --noinput &&

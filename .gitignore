@@ -3,3 +3,5 @@
 !.env.example
 __pycache__/
 node_modules/
+box_tokens.json
+*.pem

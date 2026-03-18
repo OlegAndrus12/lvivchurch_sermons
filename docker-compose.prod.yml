@@ -4,13 +4,15 @@ services:
       context: .
       args:
         - SECRET_KEY=${SECRET_KEY}
-        - BOX_DEVELOPER_TOKEN=${BOX_DEVELOPER_TOKEN}
     ports:
       - "8000:8000"
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - DEBUG=False
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-      - BOX_DEVELOPER_TOKEN=${BOX_DEVELOPER_TOKEN}
+      - BOX_CLIENT_ID=${BOX_CLIENT_ID}
+      - BOX_CLIENT_SECRET=${BOX_CLIENT_SECRET}
+      - BOX_TOKEN_FILE=/app/box_tokens.json
     volumes:
       - ./db.sqlite3:/app/db.sqlite3
+      - ./box_tokens.json:/app/box_tokens.json

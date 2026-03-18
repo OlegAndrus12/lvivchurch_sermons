@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Preacher, Sermon
+from .models import Preacher, Sermon, box_storage
 
 
 @admin.register(Preacher)
@@ -15,7 +15,10 @@ class SermonAdmin(admin.ModelAdmin):
     search_fields = ("title", "preacher__first_name", "preacher__last_name")
     list_filter = ("preacher", "date")
 
-    def get_fields(self, request, obj=None):
-        if obj:
-            return self.fields + ["audio", "text", "agenda"]
-        return super().get_fields(request, obj)
+    def save_model(self, request, obj, form, change):
+        if not obj.folder_id:
+            obj.folder_id = box_storage.create_folder(obj.format_sermon_folder())
+
+        box_storage.set_folder_id(obj.folder_id)
+
+        super().save_model(request, obj, form, change)

@@ -1,7 +1,8 @@
 from django.db import models
 from sermons_index.services.storage import AppBoxStorage
 
-fs = AppBoxStorage()
+
+box_storage = AppBoxStorage()
 
 
 class Preacher(models.Model):
@@ -18,9 +19,9 @@ class Sermon(models.Model):
     date = models.DateField(unique=True)
     reference = models.CharField(max_length=100)
 
-    audio = models.FileField(blank=True, null=True, storage=fs)
-    text = models.FileField(blank=True, null=True, storage=fs)
-    agenda = models.FileField(blank=True, null=True, storage=fs)
+    audio = models.FileField(blank=True, null=True, storage=box_storage)
+    text = models.FileField(blank=True, null=True, storage=box_storage)
+    agenda = models.FileField(blank=True, null=True, storage=box_storage)
     folder_id = models.CharField(blank=True, max_length=64)
 
     def __str__(self):
@@ -34,7 +35,6 @@ class Sermon(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.folder_id:
-            self.folder_id = fs.create_folder(self.format_sermon_folder())
+            self.folder_id = box_storage.create_folder(self.format_sermon_folder())
 
-        fs.set_folder_id(self.folder_id)
         super().save(*args, **kwargs)
