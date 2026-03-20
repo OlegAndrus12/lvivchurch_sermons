@@ -1,0 +1,8 @@
+{% load i18n %}
+
+<div class="wizard-actions">
+    <button type="submit" class="btn btn-primary">{% trans "Next" %}</button>
+    {% if cancel_url %}
+        <a href="{{ cancel_url }}" class="wizard-actions__cancel">{% trans "Cancel" %}</a>
+    {% endif %}
+</div>

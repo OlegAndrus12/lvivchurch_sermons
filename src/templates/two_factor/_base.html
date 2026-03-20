@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}{% endblock %} — Церква · Львів</title>
+        <link rel="stylesheet" href="{% static 'css/base.css' %}">
+        {% block extra_media %}{% endblock %}
+    </head>
+    <body>
+        {% block content_wrapper %}
+            <div class="auth-wrapper">
+                <div class="auth-card">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        {% endblock %}
+    </body>
+</html>

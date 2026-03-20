@@ -60,16 +60,25 @@ class FileTokenStorage(TokenStorage):
 @deconstructible
 class AppBoxStorage(Storage):
     def __init__(self):
-        token_file = os.environ["BOX_TOKEN_FILE"]
-        auth = BoxOAuth(
-            OAuthConfig(
-                client_id=os.environ["BOX_CLIENT_ID"],
-                client_secret=os.environ["BOX_CLIENT_SECRET"],
-                token_storage=FileTokenStorage(token_file),
-            )
-        )
-        self.api = BoxClient(auth)
+        self._api = None
         self.folder_id = None
+
+    def _get_api(self) -> BoxClient:
+        if self._api is None:
+            token_file = os.environ["BOX_TOKEN_FILE"]
+            auth = BoxOAuth(
+                OAuthConfig(
+                    client_id=os.environ["BOX_CLIENT_ID"],
+                    client_secret=os.environ["BOX_CLIENT_SECRET"],
+                    token_storage=FileTokenStorage(token_file),
+                )
+            )
+            self._api = BoxClient(auth)
+        return self._api
+
+    @property
+    def api(self) -> BoxClient:
+        return self._get_api()
 
     def _save(self, name, file):
         return self.upload_file(name, file)
